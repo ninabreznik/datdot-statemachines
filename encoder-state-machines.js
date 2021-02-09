@@ -1,41 +1,29 @@
-const hosting_setup_machine = {
+const hosting_setup_machine = Machine({
   initial: 'idle',
   states: {
-    'idle': {
+    idle: {
       actions: ['disconnect_all'],
-      on: 'new_hosting_setup_event',
-      next: ['connect_to_attestor'],
-      fail: {
-        'no_connection_made': {
-          retry: 3
-          next: ['idle']
+      on: {
+        EVENT: { // new_hosting_setup
+          target: 'connect_encode_send_to_attestor'
         }
+      },
+    },
+    connect_encode_send_to_attestor: {
+      actions: ['get_data', 'encode', 'p2plex_connect', 'send_data_to_attestor'], // streaming, all happening in parallel
+      on: {
+        RESOLVE: 'idle',
+        REJECT: 'failure'  // retry
       }
     },
-    'connect_to_attestor': {
-      actions: ['get_data', 'encode', 'p2plex_connect', 'send_data_to_attestor'],
-      on: 'attestor_received_all_encoded',
-      next: ['idle'],
-      fail: {
-        'no_data_avail': {
-          retry: 3,
-          next: ['idle']
-        },
-        'encoding_failed': {
-          retry: 3,
-          next: ['idle']
-        },
-        'no_received_ack': {
-          retry: 3,
-          next: ['idle']
-        },
-        'connection_failed': {
-          retry: 3,
-          next: ['idle']
-        }
+    failure: {
+      on: {
+        RETRY: 'connect_encode_send_to_attestor'
       }
     }
-    'restart_hosting_setup': {}, // resume (continue where you left of)
-    'restart_hosting_setup_with_new_attestor': {} //partial resume (need to connect and send encoded (encoding is done))
   }
-}
+})
+
+
+restart_hosting_setup: {}, // resume (continue where you left of)
+restart_hosting_setup_with_new_attestor: {} //partial resume (need to connect and send encoded (encoding is done))

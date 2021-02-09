@@ -11,8 +11,14 @@ const hosting_setup_machine = Machine({
     idle: {
       actions: ['disconnect_all'],
       on: {
-        EVENT: {
+        EVENT_NEW_HOSTING_SETUP: {
           target: 'connect_to_encoders_and_hosters'
+        },
+        EVENT_STORAGE_CHALLENGE: {
+          target: 'storage_challenge'
+        },
+        EVENT_PERFORMANCEE_CHALLENGE: {
+          target: 'performance_challenge'
         }
       },
     },
@@ -33,6 +39,18 @@ const hosting_setup_machine = Machine({
       }
     },
 
+    storage_challenge: {
+      actions: ['p2plex', 'receive_data', 'verify', 'report_to_chain'],
+      on: {
+        RESOLVE: 'report_to_chain',
+        REJECT: 'failure'
+      }
+    },
+
+    performance_challenge: {
+      actions: ['']
+    },
+
     report_to_chain: {
       actions: ['send_report'],
       target: 'idle'
@@ -40,7 +58,7 @@ const hosting_setup_machine = Machine({
 
     failure: {
       on: {
-        RETRY: 'connect_to_encoders_and_hosters'
+        RETRY: Machine.history // @TODO
       }
     }
   }

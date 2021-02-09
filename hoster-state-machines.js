@@ -4,9 +4,12 @@ const hosting_setup_machine = Machine({
     idle: {
       actions: ['disconnect_all', 'drop_all_data'],
       on: {
-        EVENT: { // new hosting setup
+        EVENT_NEW_HOSTING_SETUP: { // new_hosting_setup
           target: 'connect_receive_store_data'
-        }
+        },
+        EVENT_RESUME_HOSTING_SETUP: { // new_hosting_setup
+          target: 'resume_hosting_setup'
+        },
       },
     },
     connect_receive_store_data: {
@@ -16,17 +19,44 @@ const hosting_setup_machine = Machine({
         REJECT: 'failure' // retry
       },
     },
+    resume_hosting_setup: {
+      actions: ['resume'], // streaming, all happening in parallel
+      on: {
+        RESOLVE: 'idle',
+        REJECT: 'failure'  // retry
+      }
+    },
     hosting: {
       actions: ['join_swarm_and_seed'],
       on: {
-        EVENT: { // drop hosting // challenges
+        EVENT_DROP_HOSTING: {
           target: 'drop_hosting'
+        },
+        EVENT_STORAGE_CHALLENGE: {
+          target: 'storage_challenge_response'
+        },
+        EVENT_PERFORMANCEE_CHALLENGE: {
+          target: 'performance_challenge_response'
         }
       }
     },
     drop_hosting: {
       actions: ['exit_swarm', 'delete_data'],
       onDone: 'idle'
+    },
+    storage_challenge_response: {
+      actions: ['p2plex_connect', 'provide_proof'],
+      on: {
+        RESOLVE: 'hosting',
+        REJECT: 'failure'
+      }
+    },
+    performance_challenge_response: {
+      actions: ['p2plex_connect', 'provide_proof'],
+      on: {
+        RESOLVE: 'hosting',
+        REJECT: 'failure'
+      }
     },
     failure: {
       on: {
@@ -37,51 +67,18 @@ const hosting_setup_machine = Machine({
 })
 
 
-const storage_challenge = {
-  initial: 'hosting',
-  states: {
-    'hosting': {
-      on: 'new_storage_challenge',
-      target: ['storage_challenge_response'],
-      failure: {
-        'no_connection_made': {
-          retry: 3,
-          target: ['hosting']
-        }
-      }
-    },
-    'storage_challenge_response': {
-      actions: ['p2plex_connect', 'provide_proof'],
-      on: {
-        RESOLVE: 'hosting',
-        REJECT: 'storage_challenge_response' // retry
-      }
-    }
-    'restart_hosting_setup': {}, // resume (continue where you left of)
-    'restart_hosting_setup_with_new_attestor': {} //partial resume (need to connect, tell what you miss)
-  }
-}
+// HELPERS
 
-const performance_challenge = {
-  initial: 'hosting',
-  states: {
-    'hosting': {
-      on: 'new_performance_challenge',
-      target: ['performance_challenge_response'],
-      failure: {
-        'no_connection_made': {
-          retry: 3,
-          target: ['hosting'] // or notify chain ??
-        }
-      }
-    },
-    'performance_challenge_response': {
-      actions: ['p2plex_connect', 'provide_proof']
-      on: {
-        RESOLVE: 'hosting',
-        REJECT: 'performance_challenge_response' // retry
-      }
-      }
-    }
+resume: () => {
+
+  if (same_attestor) { // resume (continue where you left of)
+    // already connected
+    receiveMissing()
   }
+  if (new_attestor) {
+    connect()
+    tellAttestorWhatsMissing()
+    receiveMissing()
+  }
+
 }

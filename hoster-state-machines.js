@@ -1,3 +1,6 @@
+const XState = require('xstate')
+const { Machine, interpret, assign } = XState
+
 const hoster_machine = Machine({
   initial: 'idle',
   states: {

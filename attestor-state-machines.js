@@ -1,4 +1,6 @@
-const Machine = require('XState')
+const XState = require('xstate')
+const { Machine, interpret, assign } = XState
+
 
 const attestor_machine = Machine({
   initial: 'idle',

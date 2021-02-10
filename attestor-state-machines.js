@@ -1,6 +1,6 @@
 const Machine = require('XState')
 
-const hosting_setup_machine = Machine({
+const attestor_machine = Machine({
   initial: 'idle',
   context: {
    fresh: true,
@@ -17,7 +17,7 @@ const hosting_setup_machine = Machine({
         EVENT_STORAGE_CHALLENGE: {
           target: 'storage_challenge'
         },
-        EVENT_PERFORMANCEE_CHALLENGE: {
+        EVENT_PERFORMANCE_CHALLENGE: {
           target: 'performance_challenge'
         }
       },
@@ -27,7 +27,7 @@ const hosting_setup_machine = Machine({
       actions: ['connect_to_encoders', 'connect_to_hosters'],
       on: {
        RESOLVE: 'data_from_encoders_to_hosters',
-       REJECT: 'failure' // retry
+       REJECT: 'failure_hosting_setup' // retry
       }
     },
 
@@ -35,20 +35,24 @@ const hosting_setup_machine = Machine({
       actions: ['get_encoded_data', 'compare_encodings', 'send_encoded_to_hosters'],
       on: {
         RESOLVE: 'report_to_chain',
-        REJECT: 'failure'
+        REJECT: 'failure_hosting_setup'
       }
     },
 
     storage_challenge: {
-      actions: ['p2plex', 'receive_data', 'verify', 'report_to_chain'],
+      actions: ['p2plex_to_hoster', 'receive_data', 'verify', 'report_to_chain'],
       on: {
         RESOLVE: 'report_to_chain',
-        REJECT: 'failure'
+        REJECT: 'failure_storage_challenge'
       }
     },
 
     performance_challenge: {
-      actions: ['']
+      actions: ['p2plex_to_hosters', 'join_attestors_swarm', 'compare_hoster_reports', 'attestation', 'performance_challenge_report' ],
+      on: {
+        RESOLVE: 'performance_challenge_report',
+        REJECT: 'failure_performance_challenge'
+      }
     },
 
     report_to_chain: {
@@ -56,9 +60,26 @@ const hosting_setup_machine = Machine({
       target: 'idle'
     },
 
-    failure: {
+    performance_challenge_report: {
+      actions: ['send_performance_challenge_report'],
+      target: 'idle'
+    },
+
+    failure_hosting_setup: {
       on: {
-        RETRY: Machine.history // @TODO
+        RETRY: 'connect_to_encoders_and_hosters'
+      }
+    },
+
+    failure_storage_challenge: {
+      on: {
+        RETRY: 'storage_challenge'
+      }
+    },
+
+    failure_performance_challenge: {
+      on: {
+        RETRY: 'performance_challenge'
       }
     }
   }

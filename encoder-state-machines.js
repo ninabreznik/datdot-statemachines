@@ -1,4 +1,4 @@
-const hosting_setup_machine = Machine({
+const encoder_machine = Machine({
   initial: 'idle',
   states: {
     idle: {
@@ -13,22 +13,27 @@ const hosting_setup_machine = Machine({
       },
     },
     connect_encode_send_to_attestor: {
-      actions: ['get_data', 'encode', 'p2plex_connect', 'send_data_to_attestor'], // streaming, all happening in parallel
+      actions: ['get_data', 'encode', 'p2plex_to_attestor', 'send_data_to_attestor'], // streaming, all happening in parallel
       on: {
         RESOLVE: 'idle',
-        REJECT: 'failure'  // retry
+        REJECT: 'failure_connect'  // retry
       }
     },
     resume_hosting_setup: {
       actions: ['resume'], // streaming, all happening in parallel
       on: {
         RESOLVE: 'idle',
-        REJECT: 'failure'  // retry
+        REJECT: 'failure_resume'  // retry
       }
     },
-    failure: {
+    failure_connect: {
       on: {
         RETRY: 'connect_encode_send_to_attestor'
+      }
+    },
+    failure_resume: {
+      on: {
+        RETRY: 'resume_hosting_setup'
       }
     }
   }

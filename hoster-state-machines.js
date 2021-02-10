@@ -1,4 +1,4 @@
-const hosting_setup_machine = Machine({
+const hoster_machine = Machine({
   initial: 'idle',
   states: {
     idle: {
@@ -13,17 +13,17 @@ const hosting_setup_machine = Machine({
       },
     },
     connect_receive_store_data: {
-      actions: ['p2plex_connect', 'receive_and_store_data'], // stream, all happening in parallel
+      actions: ['p2plex_to_attestor', 'receive_and_store_data'], // stream, all happening in parallel
       on: {
         RESOLVE: 'hosting',
-        REJECT: 'failure' // retry
+        REJECT: 'failure_connect' // retry
       },
     },
     resume_hosting_setup: {
       actions: ['resume'], // streaming, all happening in parallel
       on: {
         RESOLVE: 'idle',
-        REJECT: 'failure'  // retry
+        REJECT: 'failure_resume'  // retry
       }
     },
     hosting: {
@@ -45,22 +45,37 @@ const hosting_setup_machine = Machine({
       onDone: 'idle'
     },
     storage_challenge_response: {
-      actions: ['p2plex_connect', 'provide_proof'],
+      actions: ['p2plex_to_attestor', 'provide_proof'],
       on: {
         RESOLVE: 'hosting',
-        REJECT: 'failure'
+        REJECT: 'failure_storage_challenge'
       }
     },
     performance_challenge_response: {
-      actions: ['p2plex_connect', 'provide_proof'],
+      actions: ['p2plex_connect_to_attestors_observers', 'start_sending_reports'],
       on: {
         RESOLVE: 'hosting',
-        REJECT: 'failure'
+        REJECT: 'failure_performance_challenge'
       }
     },
-    failure: {
+    failure_connect: {
       on: {
         RETRY: 'connect_receive_store_data'
+      }
+    },
+    failure_resume: {
+      on: {
+        RETRY: 'resume_hosting_setup'
+      }
+    },
+    failure_storage_challenge: {
+      on: {
+        RETRY: 'storage_challenge_response'
+      }
+    },
+    failure_performance_challenge: {
+      on: {
+        RETRY: 'performance_challenge_response'
       }
     }
   }

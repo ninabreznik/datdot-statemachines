@@ -8,15 +8,22 @@ const encoder_machine = Machine({
       actions: ['disconnect_all'],
       on: {
         EVENT_NEW_HOSTING_SETUP: { // new_hosting_setup
-          target: 'connect_encode_send_to_attestor'
+          target: 'connect_to_attestor'
         },
         EVENT_RESUME_HOSTING_SETUP: { // new_hosting_setup
           target: 'resume_hosting_setup'
         },
       },
     },
-    connect_encode_send_to_attestor: {
-      actions: ['get_data', 'encode', 'p2plex_to_attestor', 'send_data_to_attestor'], // streaming, all happening in parallel
+    connect_to_attestor: {
+      actions: ['p2plex_to_attestor'],
+      on: {
+        RESOLVE: 'encode_data_and_send_to_attestor',
+        REJECT: 'failure_connect'  // retry
+      }
+    },
+    encode_data_and_send_to_attestor: {
+      actions: ['get_and_verify_original_data', 'encode', 'send_data_to_attestor'], // streaming, all happening in parallel
       on: {
         RESOLVE: 'idle',
         REJECT: 'failure_connect'  // retry
@@ -31,7 +38,7 @@ const encoder_machine = Machine({
     },
     failure_connect: {
       on: {
-        RETRY: 'connect_encode_send_to_attestor'
+        RETRY: 'connect_to_attestor'
       }
     },
     failure_resume: {

@@ -28,11 +28,11 @@ const new_hosting_setup_states = {
       on: {
         RETRY: 'data_from_encoders_to_hosters'
       }
-    }
+    },
     report_to_chain: {
       actions: ['send_report'],
       on: {
-        RESOLVE: 'failure_report_to_chain', // @TODO change to idle
+        RESOLVE: '#idleState',
         REJECT: 'failure_report_to_chain'
       }
     },
@@ -64,7 +64,7 @@ const storage_challenge_states = {
     storage_challenge_report: {
       actions: ['send_report'],
       on: {
-        RESOLVE: 'failure_storage_challenge_report', // @TODO  change to idle
+        RESOLVE: '#idleState',
         REJECT: 'failure_storage_challenge_report'
       }
     },
@@ -140,7 +140,7 @@ const performance_challenge_states = {
     performance_challenge_report: {
       actions: ['compare_reports_with_other_attestors'],
       on: {
-        RESOLVE: 'failure_performance_challenge_report', // @TODO  change to idle
+        RESOLVE: '#idleState',
         REJECT: 'failure_performance_challenge_report'
       }
     },
@@ -161,6 +161,7 @@ const attestor_machine = Machine({
  },
   states: {
     idle: {
+      id: 'idleState',
       actions: ['disconnect_all'],
       on: {
         EVENT_NEW_HOSTING_SETUP: {

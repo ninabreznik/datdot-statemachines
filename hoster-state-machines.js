@@ -1,34 +1,79 @@
 const XState = require('xstate')
 const { Machine, interpret, assign } = XState
 
+const new_hosting_setup_states = {
+    initial: 'connect_to_attestor',
+    states: {
+      connect_to_attestor: {
+        actions: ['p2plex_to_attestor'],
+        on: {
+          RESOLVE: 'receive_and_store_data',
+          REJECT: 'failure_connect_to_attestor' // retry
+        },
+      },
+      failure_connect_to_attestor: {
+        on: {
+          RETRY: 'connect_to_attestor'
+        }
+      },
+      receive_and_store_data: {
+        actions: ['receive_data', 'verify_data', 'store_data'], // stream, all happening in parallel
+        on: {
+          RESOLVE: '#idleState',
+          REJECT: 'failure_receive_and_store_data' // retry
+        },
+      },
+      failure_receive_and_store_data: {
+        on: {
+          RETRY: 'receive_and_store_data'
+        }
+      },
+    }
+}
+
+const resume_hosting_setup_states = {
+    initial: 'resume_hosting_setup',
+    states: {
+      resume_hosting_setup: {
+        actions: ['resume'], // streaming, all happening in parallel
+        on: {
+          RESOLVE: '#idleState',
+          REJECT: 'failure_resume_hosting_setup'  // retry
+        }
+      },
+      failure_resume_hosting_setup: {
+        on: {
+          RETRY: 'resume_hosting_setup'
+        }
+      },
+    }
+}
+
+
 const hoster_machine = Machine({
   initial: 'idle',
   states: {
     idle: {
+      id: 'idleState',
       actions: ['disconnect_all', 'drop_all_data'],
       on: {
-        EVENT_NEW_HOSTING_SETUP: { // new_hosting_setup
-          target: 'connect_receive_store_data'
+        EVENT_NEW_HOSTING_SETUP: {
+          target: 'new_hosting_setup'
         },
-        EVENT_RESUME_HOSTING_SETUP: { // new_hosting_setup
+        EVENT_RESUME_HOSTING_SETUP: {
           target: 'resume_hosting_setup'
         },
       },
     },
-    connect_receive_store_data: {
-      actions: ['p2plex_to_attestor', 'receive_and_store_data'], // stream, all happening in parallel
-      on: {
-        RESOLVE: 'hosting',
-        REJECT: 'failure_connect' // retry
-      },
+    new_hosting_setup: {
+      on: {},
+      ...new_hosting_setup_states
     },
     resume_hosting_setup: {
-      actions: ['resume'], // streaming, all happening in parallel
-      on: {
-        RESOLVE: 'idle',
-        REJECT: 'failure_resume'  // retry
-      }
+      on: {},
+      ...resume_hosting_setup_states
     },
+
     hosting: {
       actions: ['join_swarm_and_seed'],
       on: {
@@ -61,16 +106,6 @@ const hoster_machine = Machine({
         REJECT: 'failure_performance_challenge'
       }
     },
-    failure_connect: {
-      on: {
-        RETRY: 'connect_receive_store_data'
-      }
-    },
-    failure_resume: {
-      on: {
-        RETRY: 'resume_hosting_setup'
-      }
-    },
     failure_storage_challenge: {
       on: {
         RETRY: 'storage_challenge_response'
@@ -80,7 +115,7 @@ const hoster_machine = Machine({
       on: {
         RETRY: 'performance_challenge_response'
       }
-    }
+    },
   }
 })
 

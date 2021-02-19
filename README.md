@@ -1,16 +1,17 @@
-# State machines for different roles in [DatDot](https://github.com/playproject-io/datdot-service)
+# State machines and general structure for [DatDot](https://github.com/playproject-io/datdot-service)
 
-To visualize the process, go to the [XState vizualizer](https://xstate.js.org/viz/) 
+To visualize the processes, described as state machines, go to the [XState vizualizer](https://xstate.js.org/viz/)
 
-## hostingSetup
-  - [x] attestor
-  - [x] hosters
-  - [x] encoders
+## User
+  - make account
+  - managing private keys, passwords
+  - managing balance
 
-## storage challenge
-  - [x]   attestor
-  - [x]   hoster
+## Data
+  - managing data and hosting plans
 
-## performance challenge
-  - [ ]   attestors
-  - [ ] hosters
+## Jobs
+  - managing resources provided to the network
+
+## Apps
+  - tracks usage, settings and solidarity for connected apps

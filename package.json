@@ -1,0 +1,34 @@
+{
+  "name": "state-machines",
+  "version": "0.0.1",
+  "description": "datdot-state-machines",
+  "main": "attestor-state-machines.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "simulate options"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ninabreznik/datdot-statemachines.git"
+  },
+  "keywords": [
+    "datdot",
+    "xstate",
+    "statemachines"
+  ],
+  "author": "ninabreznik for @datdotorg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ninabreznik/datdot-statemachines/issues"
+  },
+  "homepage": "https://github.com/ninabreznik/datdot-statemachines#readme",
+  "dependencies": {
+    "hyperbee": "^1.5.3",
+    "hypercore": "^9.8.0",
+    "random-access-memory": "^3.1.2",
+    "xstate": "^4.16.2"
+  },
+  "devDependencies": {
+    "scenario-simulator": "0.0.14"
+  }
+}

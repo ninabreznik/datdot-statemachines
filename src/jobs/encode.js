@@ -8,16 +8,19 @@ async function run_state_machine () {
   const last_saved = await db.get('current_state')
   if (last_saved) console.log('LAST SAVED STATE:', JSON.parse(last_saved.value).value)
 
-  const attestor_service = interpret(encode_SM)
+  const encode_service = interpret(encode_SM)
   .onTransition(async (state) => {
     console.log('CURRENT STATE:', state.value)
     await db.put('current_state', JSON.stringify(state))
-    if (state.value === 'connect_to_attestor') attestor_service.send('_RESOLVE')
-    if (state.value === 'encode_data_and_send_to_attestor') attestor_service.send('_RESOLVE')
+    if (state.value.hosting_start) {
+      if (state.value.hosting_start === 'find_last_state') encode_service.send('RESOLVE')
+      if (state.value.hosting_start === 'connect_to_attestor') encode_service.send('RESOLVE')
+      if (state.value.hosting_start === 'encode_data_and_send_to_attestor') encode_service.send('RESOLVE')
+    }
   })
 
   .start();
-  attestor_service.send('EVENT_HOSTING_START')
+  encode_service.send('EVENT_HOSTING_START')
 }
 
 run_state_machine()

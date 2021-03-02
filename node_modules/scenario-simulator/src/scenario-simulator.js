@@ -30,8 +30,9 @@ async function execute (log) {
   const spawn = require('cross-spawn')
   const path = require('path')
 
-  const SCENARIOS = path.join(process.cwd(), './scenario')
-  const APPS = path.join(process.cwd(), './app')
+  const prefix = process.env.SIM || './examples'
+  const SCENARIOS = path.join(process.cwd(), prefix, 'scenario')
+  const APPS = path.join(process.cwd(), prefix, 'scenario/app')
   var [scenario_name, PORT] = process.argv.slice(2)
   if (!scenario_name) return log.error('missing `scenario_name` argument')
   if (scenario_name.includes('.')) return log.error('no "." allowed in scenario_name')  

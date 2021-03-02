@@ -4,6 +4,8 @@ const attest_SM = require('attest-state-machine')
 const host_SM = require('host-state-machine')
 const make_db = require('make-hyperbee')
 
+module.exports = run_state_machine
+
 async function run_state_machine () {
   const db = await make_db()
   const last_saved = await db.get('current_state')

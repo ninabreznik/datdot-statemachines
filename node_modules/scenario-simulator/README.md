@@ -4,7 +4,7 @@ start multiple `<appfile>.js` processes based on a `<scenario>.json` file
 # define
 `npm install scenario-simulator`
 
-for example make a new project folder
+for example make a new project folder `<project>`
 ```js
 // <project>/package.json
 {
@@ -22,7 +22,24 @@ for example make a new project folder
 
 ```
 
-with `<project>/app/node_modules/_start.js`
+all file paths further below are prefixed with:
+* `<project>/examples` (where `./examples` is the default)
+
+This can be changed to something else (e.g. `./demo`),
+by setting an environment variable explicitly:
+```js
+{
+  "scripts": {
+    "start": "SIM=demo simulate"
+  }
+}
+```
+
+But we are using the default, which is `./examples` :-)
+
+---
+
+with `<project>/examples/node_modules/_start.js`
 ```js
 const firestarter = 5
 module.exports = function start (index) {
@@ -34,7 +51,7 @@ module.exports = function start (index) {
 }
 ```
 
-with `<project>/app/app1.js`
+with `<project>/examples/scenario/app/app1.js`
 
 ```js
 const start = require('_start')
@@ -48,7 +65,7 @@ console.log({ pid, list })
 start(list.indexOf(pid))
 ```
 
-and `<project>/app/app2.js`
+and `<project>/examples/scenario/app/app2.js`
 ```js
 const start = require('_start')
 const simulate = require('scenario-simulator')
@@ -72,6 +89,7 @@ and a first scenario file
 The following describes how to start the simulator, which launches multiple process instances according to the scenario file.
 It then shows how to send messages to individual processes, which they can listen and react to.
 The purpose of sending messages is to simulate local user input in one particular process. 
+
 ```bash
 npm start
 # [ROOT] ERROR:

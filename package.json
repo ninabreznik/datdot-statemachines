@@ -5,7 +5,7 @@
   "main": "attestor-state-machines.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "simulate options"
+    "sim": "simulate"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "xstate": "^4.16.2"
   },
   "devDependencies": {
-    "scenario-simulator": "0.0.14"
+    "node-fetch": "^2.6.1",
+    "scenario-simulator": "0.0.15"
   }
 }

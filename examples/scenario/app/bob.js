@@ -70,7 +70,9 @@ function bob (wire) {
   // vs.
   const send = to('_datdot', defaults)
   // vs.
-  const send = to('_datdot')
+  const send = await to('_datdot')
+  send(message)
+  await to('_datdot').then(send => send(message))
   send.on(on)
   send.off(off)
   /******************************************************************

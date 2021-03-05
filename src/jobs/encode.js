@@ -1,6 +1,6 @@
 const XState = require('xstate')
 const { Machine, interpret, assign } = XState
-const encode_SM = require('encode-state-machine')
+const encode_SM = require('encode-sm')
 const make_db = require('make-hyperbee')
 
 async function run_state_machine (db, cb) {

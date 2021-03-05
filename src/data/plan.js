@@ -1,6 +1,6 @@
 const XState = require('xstate')
 const { Machine, interpret, assign } = XState
-const plan_SM = require('plan-state-machine')
+const plan_SM = require('plan-sm')
 const make_db = require('make-hyperbee')
 
 async function run_state_machine () {

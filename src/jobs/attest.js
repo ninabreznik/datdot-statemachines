@@ -1,7 +1,7 @@
 const XState = require('xstate')
 const { Machine, interpret, assign } = XState
-const attest_SM = require('attest-state-machine')
-const host_SM = require('host-state-machine')
+const attest_SM = require('attest-sm')
+const host_SM = require('host-sm')
 const make_db = require('make-hyperbee')
 
 module.exports = run_state_machine

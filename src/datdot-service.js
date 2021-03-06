@@ -1,9 +1,3 @@
-// Core logic comes here
-// require apps, jobs, data and user
-
-// require datdot-service-sm
-// service triggers many parallel state machines
-
 const XState = require('xstate')
 const { Machine, interpret, assign } = XState
 const datdot_service_SM = require('datdot-service-sm')
@@ -35,12 +29,15 @@ async function run_state_machine () {
     // }
   })
 
-  .start();
+  .start()
+
+  // ATTEST
   datdot_service.send({ type: 'SETUP', id: id++, role: 'attest' })
   datdot_service.send({ type: 'SETUP', id: id++, role: 'attest' })
   datdot_service.send({ type: 'SETUP', id: id++, role: 'attest' })
   datdot_service.send({ type: 'SETUP', id: id++, role: 'attest' })
   datdot_service.send({ type: 'SETUP', id: id++, role: 'attest' })
+  // ENCODE
   datdot_service.send({ type: 'SETUP', id: id++, role: 'encode' })
   datdot_service.send({ type: 'SETUP', id: id++, role: 'encode' })
 

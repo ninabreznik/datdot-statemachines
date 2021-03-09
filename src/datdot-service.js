@@ -15,16 +15,18 @@ async function run_state_machine () {
   .onTransition(async (state) => {
     console.log('---------------------------------------------')
 
-    console.log('PARENT STATE:', state.value, state.context, state.event)
-
+    console.log('PARENT:', '| State:', state.value, '| Context:', state.context, '| Event:', state.event)
+    console.log('~~~')
+    console.log('Children:')
     // 'attest-0'
-    const child0 = state.context.actors.filter(el => el.id === 'attest-0')[0]
+    const child0 = state.context.actors.filter(el => el.name === 'attest-0')[0]
     if (child0) {
-      console.log('STATE for "attest-0" actor:', child0.ref.state.value, child0.ref.state.context )
-      resolved = true
+      const attest0 =child0.ref
+      console.log('attest-0', '| State:', attest0.state.value, '| Context:', attest0.state.context, '| event', attest0.state.event )
       if (child0.ref.state.value === 'get_encoders_and_hosters_states' && !resolved) {
         console.log('time to resolve')
         datdot_service.send({ type: 'RESOLVE', id: '0', role: 'attest' })
+        resolved = true
       }
     }
     // 'attest-01

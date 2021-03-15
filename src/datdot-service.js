@@ -12,8 +12,10 @@ async function run_state_machine () {
     console.log(
       'PARENT:', 
       '| State:', state.value, 
-      '| Actors:', state.context.actors ? state.context.actors.map(actor => actor.name) : '',
-      '| Event:', state.event
+      '| Actors:', state.context.actors ? state.context.actors.map(actor => actor.name) : '[]',
+      '| Event:', state.event,
+      // state.context.actors
+
     )
 
   })
@@ -21,6 +23,7 @@ async function run_state_machine () {
 
   const hosting_setup = async (id, contract_id, role) => {
     const name = await get_name(id, contract_id, role)
+    console.log({ name })
     service.send({ type: 'HOSTING_SETUP', name })
     if (name.includes('host-setup')) {
       await db.put(`${id}/${contract_id}`, name)
@@ -52,28 +55,17 @@ async function run_state_machine () {
   }
 
   async function get_name (id, contract_id, role) {
-    console.log('KEY', `${id}/${contract_id}`)
     var buff = await db.get(`${id}/${contract_id}`)
-    if (buff) {
-      var name = buff.value.toString('utf-8')
-      console.log({name}, {role})
-      return name
-    }
-    else {
-      const prefix = random_int(1000, 10000)
-      return `${prefix}-${role}-${id}`
-    }
-  }
-
-  function random_int(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
+    if (buff) { return buff.value.toString('utf-8') }
+    else { return `${id}-${contract_id}-${role}` }
   }
 
   // scenario
-  // hosting_setup(11, 246, 'attest-setup')
-  hosting_setup(26, 246, 'host-setup')
+  hosting_setup(11, 246, 'attest-setup')
+  hosting_setup(26, 246, 'host')
   // hosting_setup(17, 246, 'encode')
-  setTimeout(() => storage_proof(26, 246, 'host-storage'), 5000)
+  // setTimeout(() => storage_proof(11, 246, 'attest-storage'), 5000)
+  setTimeout(() => storage_proof(26, 246, 'host'), 5000)
 
 }
 

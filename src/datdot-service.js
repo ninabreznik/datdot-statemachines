@@ -34,18 +34,28 @@ async function run_state_machine () {
   }
 
   // SCENARIO
-  send(1, 246, 'attest', 'chain_HOSTING_SETUP')
-  send(2, 246, 'host', 'chain_HOSTING_SETUP')
-  // send(3, 246, 'encode','HOSTING_SETUP')
-  // setTimeout(() => send(4, 246, 'attest-storage', 'STORAGE_PROOF'), 5000)
-  // setTimeout(() => send(2, 246, 'host', 'STORAGE_PROOF'), 5000)
-  // setTimeout(() => send(2, 246, 'host', 'PERFORMANCE_CHECK'), 5000)
-  // setTimeout(() => send(5, 246, 'attest','PERFORMANCE_CHECK'), 5000)
+
+  // ----- attest -----
+  // send(1, 246, 'attest', 'chain_HOSTING_SETUP') // spawn SM
+
+  // send(4, 246, 'attest-storage', 'chain_STORAGE_PROOF') // spawn SM
+
+  // send(6, 246, 'attest', 'chain_LEAD_PERFORMANCE_CHECK') // spawn SM
+  // setTimeout(() => send(6, 246, 'attest', '_HOSTER_REPORT'), 5000) // send event to existing SM
+  // setTimeout(() => send(6, 246, 'attest', '_ORGANIZE_PERFORMANCE_CHECK'), 5000) // send event to existing SM
+  // setTimeout(() => send(6, 246, 'attest', '_SEND_REPORT'), 5000) // send event to existing SM
+
+  // send(7, 246, 'attest', 'chain_PERFORMANCE_CHECK') // spawn SM
+  // setTimeout(() => send(7, 246, 'attest', '_SWARM_CHECK'), 5000) // send event to existing SM
+  // setTimeout(() => send(7, 246, 'attest', '_REPORT_REVIEW'), 10000) // send event to existing SM
+
+  // ----- host -----
+  // send(2, 246, 'host', 'chain_HOSTING_SETUP') // spawn SM
+  // setTimeout(() => send(2, 246, 'host', 'chain_STORAGE_PROOF'), 5000) // send event to existing SM
+  // setTimeout(() => send(2, 246, 'host', 'chain_PERFORMANCE_CHECK'), 5000) // send event to existing SM
   
-  // setTimeout(() => send(6, 246, 'attest', 'chain_PERFORMANCE_LEAD'), 5000) 
-  setTimeout(() => send(7, 246, 'attest', 'chain_PERFORMANCE_CHECK'), 5000)
-  setTimeout(() => send(7, 246, 'attest', '_SWARM_CHECK'), 5000)
-  setTimeout(() => send(7, 246, 'attest', '_REPORT_REVIEW'), 10000)
+  // ----- encode -----
+  // send(3, 246, 'encode','chain_HOSTING_SETUP') // spawn SM
 
 }
 

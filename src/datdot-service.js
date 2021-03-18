@@ -10,7 +10,7 @@ async function run_state_machine () {
   .onTransition(async (state) => {
     console.log('---------------------------------------------')
     console.log(
-      'PARENT:', 
+      'DATDOT-SERVICE:', 
       '| State:', state.value, 
       '| Actors:', state.context.actors ? state.context.actors.map(actor => actor.name) : '[]',
       '| Event:', state.event,
@@ -35,19 +35,23 @@ async function run_state_machine () {
 
   // SCENARIO
 
+  // TODO: stop actors on demand
+
   /* ------------------------------------
              CREATE ACCOUNT
   --------------------------------------- */
+
+  send(10, 0, 'account', '_CREATE_ACCOUNT') // spawn SM
 
   /* ------------------------------------
              NEW HOSTING PLAN
   --------------------------------------- */
 
-  send(9, 246, 'plan', '_HOSTING_PLAN_SUBSCRIPTION') // spawn SM
-  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_UPDATE'), 3000) // send event to existing SM
-  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_PAUSE'), 9000) // send event to existing SM
-  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_RESUME'), 12000) // send event to existing SM
-  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_END'), 15000) // send event to existing SM
+  // send(9, 0, 'plan', '_HOSTING_PLAN_SUBSCRIPTION') // spawn SM
+  // setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_UPDATE'), 3000) // send event to existing SM
+  // setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_PAUSE'), 9000) // send event to existing SM
+  // setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_RESUME'), 12000) // send event to existing SM
+  // setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_END'), 15000) // send event to existing SM
 
   /* ------------------------------------
                    JOBS

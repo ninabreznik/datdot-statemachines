@@ -35,10 +35,28 @@ async function run_state_machine () {
 
   // SCENARIO
 
-  // ----- attest -----
+  /* ------------------------------------
+             CREATE ACCOUNT
+  --------------------------------------- */
+
+  /* ------------------------------------
+             NEW HOSTING PLAN
+  --------------------------------------- */
+
+  send(9, 246, 'plan', '_HOSTING_PLAN_SUBSCRIPTION') // spawn SM
+  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_UPDATE'), 3000) // send event to existing SM
+  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_PAUSE'), 9000) // send event to existing SM
+  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_RESUME'), 12000) // send event to existing SM
+  setTimeout(() => send(9, 246, 'plan', 'chain_PLAN_END'), 15000) // send event to existing SM
+
+  /* ------------------------------------
+                   JOBS
+  --------------------------------------- */
+
+  // ----- ATTEST -----
   // send(1, 246, 'attest', 'chain_HOSTING_SETUP') // spawn SM
 
-  // send(4, 246, 'attest-storage', 'chain_STORAGE_PROOF') // spawn SM
+  // send(4, 246, 'attest', 'chain_STORAGE_PROOF') // spawn SM
 
   // send(6, 246, 'attest', 'chain_LEAD_PERFORMANCE_CHECK') // spawn SM
   // setTimeout(() => send(6, 246, 'attest', '_HOSTER_REPORT'), 5000) // send event to existing SM
@@ -49,12 +67,12 @@ async function run_state_machine () {
   // setTimeout(() => send(7, 246, 'attest', '_SWARM_CHECK'), 5000) // send event to existing SM
   // setTimeout(() => send(7, 246, 'attest', '_REPORT_REVIEW'), 10000) // send event to existing SM
 
-  // ----- host -----
+  // ----- HOST -----
   // send(2, 246, 'host', 'chain_HOSTING_SETUP') // spawn SM
   // setTimeout(() => send(2, 246, 'host', 'chain_STORAGE_PROOF'), 5000) // send event to existing SM
   // setTimeout(() => send(2, 246, 'host', 'chain_PERFORMANCE_CHECK'), 5000) // send event to existing SM
   
-  // ----- encode -----
+  // ----- ENCODE -----
   // send(3, 246, 'encode','chain_HOSTING_SETUP') // spawn SM
 
 }

@@ -1,0 +1,2 @@
+[ ] stop actors on demand
+
